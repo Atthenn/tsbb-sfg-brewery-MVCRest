@@ -5,16 +5,16 @@ import guru.springframework.brewery.services.BeerService;
 import guru.springframework.brewery.web.model.BeerDto;
 import guru.springframework.brewery.web.model.BeerPagedList;
 import guru.springframework.brewery.web.model.BeerStyleEnum;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.DisplayName;
-import org.junit.jupiter.api.Nested;
-import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.*;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Captor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
+import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.http.MediaType;
 import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
@@ -33,18 +33,21 @@ import static org.hamcrest.Matchers.hasSize;
 import static org.hamcrest.core.Is.is;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
+import static org.mockito.Mockito.reset;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
-@ExtendWith(MockitoExtension.class)
+//@ExtendWith(MockitoExtension.class)
+@WebMvcTest(BeerController.class)
 class BeerControllerTest {
 
-    @Mock
+    @MockBean
     BeerService beerService;
 
-    @InjectMocks
-    BeerController beerController;
+   // @InjectMocks
+    //BeerController beerController;
 
+    @Autowired
     MockMvc mockMvc;
 
     BeerDto validBeer;
@@ -62,10 +65,14 @@ class BeerControllerTest {
                 .lastModifiedDate(OffsetDateTime.now())
                 .build();
 
-        mockMvc = MockMvcBuilders.standaloneSetup(beerController)
-                .setMessageConverters(jackson2HttpMessageConverter()).build();
+    //    mockMvc = MockMvcBuilders.standaloneSetup(beerController)
+      //          .setMessageConverters(jackson2HttpMessageConverter()).build();
     }
 
+    @AfterEach
+    void teadDown(){
+        reset(beerService);
+    }
     @Test
     void testGetBeerById() throws Exception {
 
@@ -133,9 +140,10 @@ class BeerControllerTest {
         }
     }
 
-    public MappingJackson2HttpMessageConverter jackson2HttpMessageConverter(){
+  /*  public MappingJackson2HttpMessageConverter jackson2HttpMessageConverter(){
 
         ObjectMapper objectMapper = new ObjectMapper();
         return  new MappingJackson2HttpMessageConverter();
     }
+ */
 }
